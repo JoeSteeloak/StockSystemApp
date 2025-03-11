@@ -10,7 +10,6 @@ public class InventoryTransaction
 
     [Required]
     public int ProductId { get; set; }
-    [Required]
     public Product? Product { get; set; }
 
     [Required]
@@ -19,12 +18,5 @@ public class InventoryTransaction
     [Required]
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
-    [Required]
-    public TransactionType Type { get; set; } // Inleverans eller utleverans
 }
 
-public enum TransactionType
-{
-    Inbound,  // Inleverans
-    Outbound  // Utleverans
-}

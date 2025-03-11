@@ -11,7 +11,7 @@ using StockSystemApp.Data;
 namespace StockSystemApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250311125215_InitialCreate")]
+    [Migration("20250311130100_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -246,9 +246,6 @@ namespace StockSystemApp.Migrations
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

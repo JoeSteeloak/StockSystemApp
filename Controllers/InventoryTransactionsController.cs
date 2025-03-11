@@ -48,7 +48,7 @@ namespace StockSystemApp.Controllers
         // GET: InventoryTransactions/Create
         public IActionResult Create()
         {
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description");
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
             return View();
         }
 
@@ -57,15 +57,22 @@ namespace StockSystemApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProductId,Quantity,Timestamp,Type")] InventoryTransaction inventoryTransaction)
+        public async Task<IActionResult> Create([Bind("Id,ProductId,Quantity,Timestamp")] InventoryTransaction inventoryTransaction)
         {
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(inventoryTransaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", inventoryTransaction.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
             return View(inventoryTransaction);
         }
 
@@ -82,7 +89,7 @@ namespace StockSystemApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", inventoryTransaction.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
             return View(inventoryTransaction);
         }
 
@@ -91,7 +98,7 @@ namespace StockSystemApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Quantity,Timestamp,Type")] InventoryTransaction inventoryTransaction)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Quantity,Timestamp")] InventoryTransaction inventoryTransaction)
         {
             if (id != inventoryTransaction.Id)
             {
@@ -118,7 +125,7 @@ namespace StockSystemApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", inventoryTransaction.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
             return View(inventoryTransaction);
         }
 

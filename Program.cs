@@ -14,7 +14,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Identity & autentisering
 builder.Services.AddDefaultIdentity<IdentityUser>(options => 
     options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>() // Lägg till roller för admin-användare
+    .AddRoles<IdentityRole>() 
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddControllersWithViews();
@@ -33,16 +33,16 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Nödvändigt för CSS, JS och bilder
+app.UseStaticFiles(); 
 
 app.UseRouting();
-app.UseAuthentication(); // Lägg till autentisering innan Authorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages(); // Behövs för Identity-login
+app.MapRazorPages(); 
 
 app.Run();

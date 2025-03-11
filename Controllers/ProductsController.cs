@@ -92,37 +92,60 @@ namespace StockSystemApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Stock,CategoryId")] Product product)
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Stock,CategoryId")] Product product)
+{
+    if (id != product.Id)
+    {
+        return NotFound();
+    }
+
+    if (ModelState.IsValid)
+    {
+        try
         {
-            if (id != product.Id)
+            var existingProduct = await _context.Products
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (existingProduct == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // Kontrollera om Stock har ändrats
+            if (existingProduct.Stock != product.Stock)
             {
-                try
+                var transaction = new InventoryTransaction
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    ProductId = product.Id,
+                    Quantity = product.Stock - existingProduct.Stock, // Beräknar ändringen i lager
+                    Timestamp = DateTime.Now
+                };
+
+                _context.InventoryTransactions.Add(transaction);
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            return View(product);
+
+            // Uppdatera produkten
+            _context.Update(product);
+            await _context.SaveChangesAsync();
         }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!ProductExists(product.Id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        return RedirectToAction(nameof(Index));
+    }
+    return View(product);
+}
+
 
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)

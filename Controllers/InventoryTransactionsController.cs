@@ -59,24 +59,25 @@ namespace StockSystemApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProductId,Quantity,Timestamp")] InventoryTransaction inventoryTransaction)
+        public async Task<IActionResult> Create([Bind("Id,ProductId,Quantity,TransactionDate")] InventoryTransaction transaction)
         {
-            if (!ModelState.IsValid)
-            {
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
-            }
             if (ModelState.IsValid)
             {
-                _context.Add(inventoryTransaction);
+                var product = await _context.Products.FindAsync(transaction.ProductId);
+                if (product != null)
+                {
+                    product.Stock += transaction.Quantity; // Uppdatera lagret
+                }
+
+                _context.InventoryTransactions.Add(transaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
-            return View(inventoryTransaction);
+
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", transaction.ProductId);
+            return View(transaction);
         }
+
 
         // GET: InventoryTransactions/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -100,9 +101,9 @@ namespace StockSystemApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Quantity,Timestamp")] InventoryTransaction inventoryTransaction)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Quantity,TransactionDate")] InventoryTransaction transaction)
         {
-            if (id != inventoryTransaction.Id)
+            if (id != transaction.Id)
             {
                 return NotFound();
             }
@@ -111,12 +112,28 @@ namespace StockSystemApp.Controllers
             {
                 try
                 {
-                    _context.Update(inventoryTransaction);
+                    var existingTransaction = await _context.InventoryTransactions
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(t => t.Id == id);
+
+                    if (existingTransaction == null)
+                    {
+                        return NotFound();
+                    }
+
+                    var product = await _context.Products.FindAsync(transaction.ProductId);
+                    if (product != null)
+                    {
+                        // Justera lagret baserat på skillnaden i Quantity
+                        product.Stock += transaction.Quantity - existingTransaction.Quantity;
+                    }
+
+                    _context.Update(transaction);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InventoryTransactionExists(inventoryTransaction.Id))
+                    if (!InventoryTransactionExists(transaction.Id))
                     {
                         return NotFound();
                     }
@@ -127,9 +144,11 @@ namespace StockSystemApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
-            return View(inventoryTransaction);
+
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", transaction.ProductId);
+            return View(transaction);
         }
+
 
         // GET: InventoryTransactions/Delete/5
         public async Task<IActionResult> Delete(int? id)

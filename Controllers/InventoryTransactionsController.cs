@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using StockSystemApp.Data;
+using StockSystemApp.Models;
 
 namespace StockSystemApp.Controllers
 {
@@ -46,7 +48,7 @@ namespace StockSystemApp.Controllers
         // GET: InventoryTransactions/Create
         public IActionResult Create()
         {
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description");
             return View();
         }
 
@@ -63,7 +65,7 @@ namespace StockSystemApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", inventoryTransaction.ProductId);
             return View(inventoryTransaction);
         }
 
@@ -80,7 +82,7 @@ namespace StockSystemApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", inventoryTransaction.ProductId);
             return View(inventoryTransaction);
         }
 
@@ -116,7 +118,7 @@ namespace StockSystemApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", inventoryTransaction.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", inventoryTransaction.ProductId);
             return View(inventoryTransaction);
         }
 

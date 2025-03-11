@@ -1,4 +1,4 @@
-@model IEnumerable<InventoryTransaction>
+@model IEnumerable<StockSystemApp.Models.InventoryTransaction>
 
 @{
     ViewData["Title"] = "Index";
@@ -31,7 +31,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Product.Name)
+                @Html.DisplayFor(modelItem => item.Product.Description)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Quantity)

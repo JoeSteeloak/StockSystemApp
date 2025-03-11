@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using StockSystemApp.Models;
+
+namespace StockSystemApp.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {

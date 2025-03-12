@@ -1,43 +1,70 @@
-/* Tabell */
+
 table {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     table-layout: fixed;
+    border-collapse: collapse; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    border-radius: 8px; 
 }
 
-th,
-td {
-    padding: 10px;
+th, td {
+    padding: 12px 15px; 
     text-align: left;
     word-wrap: break-word;
     overflow: hidden;
+    font-family: 'Arial', sans-serif;
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #4CAF50; 
+    color: white; 
+    font-size: 1.1em;
+    text-transform: uppercase; 
+    letter-spacing: 0.5px;
+    border-radius: 8px 8px 0 0; 
 }
 
-th:nth-child(2),
-td:nth-child(2) {
-    width: 50%;
-    /* Gör 'Beskrivning' större */
+th:nth-child(2), td:nth-child(2) {
+    width: 50%; 
+    font-style: italic; 
 }
 
-th:nth-child(1),
-td:nth-child(1),
-th:nth-child(3),
-td:nth-child(3) {
-    width: 25%;
-    /* Gör 'Produkt' och 'Lagersaldo' lika stora */
+th:nth-child(1), td:nth-child(1), th:nth-child(3), td:nth-child(3) {
+    width: 25%; 
 }
 
 tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; 
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #ffffff; 
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1; 
+    transform: scale(1.02); 
+    transition: background-color 0.3s, transform 0.3s ease; 
 }
 
 .category-table h2 {
-    margin-top: 20px;
-    font-size: 1.5em;
+    margin-top: 30px;
+    font-size: 1.8em;
     font-weight: bold;
+    color: #4CAF50; 
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+
+td {
+    word-break: break-word; 
+}
+
+
+td:hover {
+    background-color: #e0f7e0; 
+    transition: background-color 0.3s ease; 
 }

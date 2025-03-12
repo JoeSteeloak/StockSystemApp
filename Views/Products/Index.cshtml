@@ -1,11 +1,11 @@
 @model IEnumerable<StockSystemApp.Models.Product>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Products";
 }
 
-<h1>Index</h1>
-
+<h1>Products</h1>
+<p>Add and remove products here. Be sure to include both a name and a description, along with the correct current stock. Choose an existing category from the list, or create a new one on the category page. If you update the stock for an already created product, a delivery record will automatically be generated on the deliveries page. Likewise, when you create a delivery on the deliveries page, the stock will be updated here as well.</p>
 <p>
     <a asp-action="Create">Create New</a>
 </p>

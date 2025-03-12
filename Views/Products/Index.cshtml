@@ -6,6 +6,15 @@
 
 <h1>Products</h1>
 <p>Add and remove products here. Be sure to include both a name and a description, along with the correct current stock. Choose an existing category from the list, or create a new one on the category page. If you update the stock for an already created product, a delivery record will automatically be generated on the deliveries page. Likewise, when you create a delivery on the deliveries page, the stock will be updated here as well.</p>
+@using (Html.BeginForm("Index", "Products", FormMethod.Get))
+{
+    <div class="form-group">
+        <label for="searchString">Search:</label>
+        <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by name, description or category" />
+        <button type="submit" class="btn btn-primary mt-2">Search</button>
+    </div>
+}
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -13,41 +22,34 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Product @if (ViewData["NameSortParm"] == "name_desc") { <span>&#x2193;</span> } else { <span>&#x2191;</span> }</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DescriptionSortParm"]">Description @if (ViewData["DescriptionSortParm"] == "description_desc") { <span>&#x2193;</span> } else { <span>&#x2191;</span> }</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Stock)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StockSortParm"]">Stock @if (ViewData["StockSortParm"] == "stock_desc") { <span>&#x2193;</span> } else { <span>&#x2191;</span> }</a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["CategorySortParm"]">Category @if (ViewData["CategorySortParm"] == "category_desc") { <span>&#x2193;</span> } else { <span>&#x2191;</span> }</a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Stock)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Stock)</td>
+                <td>@Html.DisplayFor(modelItem => item.Category.Name)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

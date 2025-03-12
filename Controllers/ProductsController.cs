@@ -22,15 +22,62 @@ namespace StockSystemApp.Controllers
         }
 
         // GET: Products
-public async Task<IActionResult> Index()
-{
-    var products = await _context.Products
-        .Include(p => p.Category)
-        .ToListAsync();
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        {
+            // Store the sorting parameters in ViewData for use in the view
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DescriptionSortParm"] = sortOrder == "Description" ? "description_desc" : "Description";
+            ViewData["StockSortParm"] = sortOrder == "Stock" ? "stock_desc" : "Stock";
+            ViewData["CategorySortParm"] = sortOrder == "Category" ? "category_desc" : "Category";
+            ViewData["CurrentFilter"] = searchString; // Store the current search term in ViewData
 
-    return View(products);
-}
+            // Get the products from the database and include the Category
+            var products = from p in _context.Products.Include(p => p.Category)
+                           select p;
 
+            // Apply the search filter if a search term is provided
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                string lowerSearchString = searchString.ToLower(); // Convert search string to lowercase
+
+                // Use ToLower() on the fields as well for case-insensitive comparison
+                products = products.Where(p => p.Name.ToLower().Contains(lowerSearchString) ||
+                                               p.Description.ToLower().Contains(lowerSearchString) ||
+                                               p.Category.Name.ToLower().Contains(lowerSearchString));
+            }
+
+            // Apply the sorting based on the sortOrder parameter
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    products = products.OrderByDescending(p => p.Name);
+                    break;
+                case "Description":
+                    products = products.OrderBy(p => p.Description);
+                    break;
+                case "description_desc":
+                    products = products.OrderByDescending(p => p.Description);
+                    break;
+                case "Stock":
+                    products = products.OrderBy(p => p.Stock);
+                    break;
+                case "stock_desc":
+                    products = products.OrderByDescending(p => p.Stock);
+                    break;
+                case "Category":
+                    products = products.OrderBy(p => p.Category.Name);
+                    break;
+                case "category_desc":
+                    products = products.OrderByDescending(p => p.Category.Name);
+                    break;
+                default:
+                    products = products.OrderBy(p => p.Name);
+                    break;
+            }
+
+            // Return the filtered and sorted list of products to the view
+            return View(await products.AsNoTracking().ToListAsync());
+        }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -96,59 +143,59 @@ public async Task<IActionResult> Index()
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Stock,CategoryId")] Product product)
-{
-    if (id != product.Id)
-    {
-        return NotFound();
-    }
-
-    if (ModelState.IsValid)
-    {
-        try
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Stock,CategoryId")] Product product)
         {
-            var existingProduct = await _context.Products
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (existingProduct == null)
+            if (id != product.Id)
             {
                 return NotFound();
             }
 
-            // Kontrollera om Stock har ändrats
-            if (existingProduct.Stock != product.Stock)
+            if (ModelState.IsValid)
             {
-                var transaction = new InventoryTransaction
+                try
                 {
-                    ProductId = product.Id,
-                    Quantity = product.Stock - existingProduct.Stock, // Beräknar ändringen i lager
-                    Timestamp = DateTime.Now
-                };
+                    var existingProduct = await _context.Products
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(p => p.Id == id);
 
-                _context.InventoryTransactions.Add(transaction);
-            }
+                    if (existingProduct == null)
+                    {
+                        return NotFound();
+                    }
 
-            // Uppdatera produkten
-            _context.Update(product);
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ProductExists(product.Id))
-            {
-                return NotFound();
+                    // Kontrollera om Stock har ändrats
+                    if (existingProduct.Stock != product.Stock)
+                    {
+                        var transaction = new InventoryTransaction
+                        {
+                            ProductId = product.Id,
+                            Quantity = product.Stock - existingProduct.Stock, // Beräknar ändringen i lager
+                            Timestamp = DateTime.Now
+                        };
+
+                        _context.InventoryTransactions.Add(transaction);
+                    }
+
+                    // Uppdatera produkten
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductExists(product.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
-            else
-            {
-                throw;
-            }
+            return View(product);
         }
-        return RedirectToAction(nameof(Index));
-    }
-    return View(product);
-}
 
 
         // GET: Products/Delete/5

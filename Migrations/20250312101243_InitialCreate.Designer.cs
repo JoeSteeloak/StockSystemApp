@@ -11,7 +11,7 @@ using StockSystemApp.Data;
 namespace StockSystemApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250311130100_InitialCreate")]
+    [Migration("20250312101243_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

@@ -16,6 +16,7 @@ public class Product
     public string? Description { get; set; }
 
     [Required]
+    [Range(0, int.MaxValue, ErrorMessage = "Amount cannot be less than zero.")]
     public int Stock { get; set; } // Lagersaldo
 
     [Required]

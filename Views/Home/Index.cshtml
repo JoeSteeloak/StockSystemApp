@@ -1,8 +1,42 @@
-﻿@{
+﻿@model IEnumerable<StockSystemApp.Models.Product>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<link href="~/css/home.css" rel="stylesheet" type="text/css" />
+
+<h1>Products</h1>
+
+@if (Model != null && Model.Any())
+{
+    <div class="category-table">
+        @foreach (var categoryGroup in Model.GroupBy(p => p.Category.Name))
+        {
+            <h2>@categoryGroup.Key</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produkt</th>
+                        <th>Beskrivning</th>
+                        <th>Lagersaldo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in categoryGroup)
+                    {
+                        <tr>
+                            <td>@product.Name</td>
+                            <td>@product.Description</td>
+                            <td>@product.Stock</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+}
+else
+{
+    <p>No products available.</p>
+}

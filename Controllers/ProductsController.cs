@@ -22,11 +22,15 @@ namespace StockSystemApp.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Products.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
-        }
+public async Task<IActionResult> Index()
+{
+    var products = await _context.Products
+        .Include(p => p.Category)
+        .ToListAsync();
+
+    return View(products);
+}
+
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)

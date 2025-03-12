@@ -1,0 +1,43 @@
+/* Tabell */
+table {
+    width: 100%;
+    margin-bottom: 20px;
+    table-layout: fixed;
+}
+
+th,
+td {
+    padding: 10px;
+    text-align: left;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    width: 50%;
+    /* Gör 'Beskrivning' större */
+}
+
+th:nth-child(1),
+td:nth-child(1),
+th:nth-child(3),
+td:nth-child(3) {
+    width: 25%;
+    /* Gör 'Produkt' och 'Lagersaldo' lika stora */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.category-table h2 {
+    margin-top: 20px;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}

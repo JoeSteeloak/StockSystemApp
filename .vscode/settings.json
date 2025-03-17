@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/7cbeaf55-2940-4d94-bb13-0835b38e747c/resourceGroups/DT191G/providers/Microsoft.Web/sites/DT191G-StockSystemApp",
+    "appService.deploySubpath": "bin\\Release\\net9.0\\publish"
+}
